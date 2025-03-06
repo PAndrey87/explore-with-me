@@ -1,6 +1,5 @@
 package ru.practicum.client;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,26 +18,34 @@ import java.util.Map;
 
 @Service
 public class StatsClient {
-    protected final RestTemplate rest;
+    private final RestTemplate rest;
 
-    public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatsClient(RestTemplateBuilder builder) {
         this.rest = builder
-                .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+                .uriTemplateHandler(new DefaultUriBuilderFactory("http://stats-server:9090"))
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
                 .build();
     }
 
-    protected ResponseEntity<Object> getStats(String start, String end, List<String> uris, boolean unique) {
+    public ResponseEntity<Object> getStats(String start, String end, List<String> uris, boolean unique) {
+        String urlTemplate = UriComponentsBuilder.fromPath("/stats")
+                .queryParam("start", "{start}")
+                .queryParam("end", "{end}")
+                .queryParam("uris", "{uris}")
+                .queryParam("unique", "{unique}")
+                .encode()
+                .toUriString();
+
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("start", start);
         parameters.put("end", end);
         parameters.put("uris", uris);
         parameters.put("unique", unique);
 
-        return makeAndSendRequest(HttpMethod.GET, "/stats", parameters, null);
+        return makeAndSendRequest(HttpMethod.GET, urlTemplate, parameters, null);
     }
 
-    protected <T> ResponseEntity<Object> create(T body) {
+    public <T> ResponseEntity<Object> create(T body) {
         return makeAndSendRequest(HttpMethod.POST, "/hit", null, body);
     }
 
