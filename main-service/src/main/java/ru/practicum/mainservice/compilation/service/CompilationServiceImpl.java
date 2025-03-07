@@ -21,6 +21,7 @@ import ru.practicum.mainservice.exception.exception.NotFoundException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ru.practicum.mainservice.util.LogColorizeUtil.colorizeClass;
 import static ru.practicum.mainservice.util.LogColorizeUtil.colorizeMethod;
@@ -59,7 +60,7 @@ public class CompilationServiceImpl implements CompilationService {
         List<CompilationDto> compilationDtos = compilations.stream()
                 .map(compilation -> {
                     log.info("{}.{}: Mapping event to EventShortDto", colorizeClass("CompilationService"), colorizeMethod("getCompilations()"));
-                    List<EventShortDto> eventShortDtos = compilation.getEvents().stream().map(eventMapper::toEventShortDtoFromEvent).toList();
+                    Set<EventShortDto> eventShortDtos = compilation.getEvents().stream().map(eventMapper::toEventShortDtoFromEvent).collect(Collectors.toSet());
                     return compilationMapper.toCompilationDtoFromCompilation(compilation, eventShortDtos);
                 })
                 .toList();
@@ -76,7 +77,7 @@ public class CompilationServiceImpl implements CompilationService {
                 .orElseThrow(() -> new NotFoundException(String.format("Compilation with id=%d not found", compId)));
 
         log.info("{}.{}: Mapping event to EventShortDto", colorizeClass("CompilationService"), colorizeMethod("getCompilationById()"));
-        List<EventShortDto> eventShortDtos = compilation.getEvents().stream().map(eventMapper::toEventShortDtoFromEvent).toList();
+        Set<EventShortDto> eventShortDtos = compilation.getEvents().stream().map(eventMapper::toEventShortDtoFromEvent).collect(Collectors.toSet());
 
         log.info("{}.{}: Mapping compilations to CompilationDto", colorizeClass("CompilationService"), colorizeMethod("getCompilationById()"));
         CompilationDto compilationDto = compilationMapper.toCompilationDtoFromCompilation(compilation, eventShortDtos);
@@ -104,7 +105,7 @@ public class CompilationServiceImpl implements CompilationService {
         compilation = compilationRepository.save(compilation);
 
         log.info("{}.{}: Mapping event to EventShortDto", colorizeClass("CompilationService"), colorizeMethod("create()"));
-        List<EventShortDto> eventShortDtos = compilation.getEvents().stream().map(eventMapper::toEventShortDtoFromEvent).toList();
+        Set<EventShortDto> eventShortDtos = compilation.getEvents().stream().map(eventMapper::toEventShortDtoFromEvent).collect(Collectors.toSet());
 
         log.info("{}.{}: Mapping compilations to CompilationDto", colorizeClass("CompilationService"), colorizeMethod("create()"));
         CompilationDto compilationDto = compilationMapper.toCompilationDtoFromCompilation(compilation, eventShortDtos);
@@ -166,7 +167,7 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("{}.{}: Mapping compilations to CompilationDto", colorizeClass("CompilationService"), colorizeMethod("update()"));
         CompilationDto compilationDto = compilationMapper.toCompilationDtoFromCompilation(compilation, compilation.getEvents().stream()
                 .map(eventMapper::toEventShortDtoFromEvent)
-                .toList());
+                .collect(Collectors.toSet()));
 
         log.info("{}.{}: Successfully updated compilation with id={}", colorizeClass("CompilationService"), colorizeMethod("update()"), compId);
         return compilationDto;

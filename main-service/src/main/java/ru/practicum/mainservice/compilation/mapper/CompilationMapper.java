@@ -7,7 +7,6 @@ import ru.practicum.mainservice.compilation.model.Compilation;
 import ru.practicum.mainservice.event.dto.EventShortDto;
 import ru.practicum.mainservice.event.model.Event;
 
-import java.util.List;
 import java.util.Set;
 
 @Component
@@ -20,7 +19,7 @@ public class CompilationMapper {
                 .build();
     }
 
-    public CompilationDto toCompilationDtoFromCompilation(Compilation compilation, List<EventShortDto> events) {
+    public CompilationDto toCompilationDtoFromCompilation(Compilation compilation, Set<EventShortDto> events) {
         return CompilationDto.builder()
                 .id(compilation.getId())
                 .title(compilation.getTitle())
