@@ -11,6 +11,7 @@ import java.util.List;
 @RequestMapping("/compilations")
 @RequiredArgsConstructor
 public class CompilationPublicController {
+    public static final String COMP_ID = "comp-id";
     private final CompilationService compilationService;
 
     @GetMapping
@@ -20,9 +21,8 @@ public class CompilationPublicController {
         return compilationService.getCompilations(pinned, from, size);
     }
 
-    @GetMapping("/{comp-id}")
-    public CompilationDto getCompilationById(@PathVariable("comp-id") Long compId) {
+    @GetMapping("/{" + COMP_ID + "}")
+    public CompilationDto getCompilationById(@PathVariable(COMP_ID) Long compId) {
         return compilationService.getCompilationById(compId);
     }
-
 }

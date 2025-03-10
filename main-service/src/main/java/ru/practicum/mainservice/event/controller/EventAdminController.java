@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/admin/events")
 @RequiredArgsConstructor
 public class EventAdminController {
+    public static final String EVENT_ID = "event-id";
     private final EventService eventService;
 
     @GetMapping
@@ -35,8 +36,8 @@ public class EventAdminController {
                 size);
     }
 
-    @PatchMapping("/{event-id}")
-    public EventFullDto updateByAdmin(@PathVariable("event-id") Long eventId,
+    @PatchMapping("/{" + EVENT_ID + "}")
+    public EventFullDto updateByAdmin(@PathVariable(EVENT_ID) Long eventId,
                                       @Valid @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
         return eventService.updateByAdmin(eventId, updateEventAdminRequest);
     }

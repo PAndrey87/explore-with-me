@@ -56,17 +56,18 @@ public class Event {
     @Column(nullable = false, length = 120)
     String title;
     Long views;
+    Double rating;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return paid == event.paid && requestModeration == event.requestModeration && Objects.equals(id, event.id) && Objects.equals(annotation, event.annotation) && Objects.equals(category, event.category) && Objects.equals(confirmedRequests, event.confirmedRequests) && Objects.equals(createdOn, event.createdOn) && Objects.equals(description, event.description) && Objects.equals(eventDate, event.eventDate) && Objects.equals(initiator, event.initiator) && Objects.equals(location, event.location) && Objects.equals(participantLimit, event.participantLimit) && Objects.equals(publishedOn, event.publishedOn) && state == event.state && Objects.equals(title, event.title) && Objects.equals(views, event.views);
+        return paid == event.paid && requestModeration == event.requestModeration && Objects.equals(id, event.id) && Objects.equals(annotation, event.annotation) && Objects.equals(category, event.category) && Objects.equals(confirmedRequests, event.confirmedRequests) && Objects.equals(createdOn, event.createdOn) && Objects.equals(description, event.description) && Objects.equals(eventDate, event.eventDate) && Objects.equals(initiator, event.initiator) && Objects.equals(location, event.location) && Objects.equals(participantLimit, event.participantLimit) && Objects.equals(publishedOn, event.publishedOn) && state == event.state && Objects.equals(title, event.title) && Objects.equals(views, event.views) && Objects.equals(rating, event.rating);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, annotation, category, confirmedRequests, createdOn, description, eventDate, initiator, location, paid, participantLimit, publishedOn, requestModeration, state, title, views);
+        return Objects.hash(id, annotation, category, confirmedRequests, createdOn, description, eventDate, initiator, location, paid, participantLimit, publishedOn, requestModeration, state, title, views, rating);
     }
 }
