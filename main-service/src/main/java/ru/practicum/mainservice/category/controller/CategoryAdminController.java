@@ -12,6 +12,7 @@ import ru.practicum.mainservice.category.service.CategoryService;
 @RequestMapping("/admin/categories")
 @RequiredArgsConstructor
 public class CategoryAdminController {
+    public static final String CAT_ID = "cat-id";
     private final CategoryService categoryService;
 
     @PostMapping
@@ -20,14 +21,14 @@ public class CategoryAdminController {
         return categoryService.create(newCategoryDto);
     }
 
-    @DeleteMapping("/{cat-id}")
+    @DeleteMapping("/{" + CAT_ID + "}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("cat-id") Long catId) {
+    public void delete(@PathVariable(CAT_ID) Long catId) {
         categoryService.delete(catId);
     }
 
-    @PatchMapping("/{cat-id}")
-    public CategoryDto update(@PathVariable("cat-id") Long catId, @Valid @RequestBody CategoryDto categoryDto) {
+    @PatchMapping("/{" + CAT_ID + "}")
+    public CategoryDto update(@PathVariable(CAT_ID) Long catId, @Valid @RequestBody CategoryDto categoryDto) {
         return categoryService.update(catId, categoryDto);
     }
 }

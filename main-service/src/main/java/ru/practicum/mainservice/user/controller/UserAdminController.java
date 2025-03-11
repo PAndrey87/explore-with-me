@@ -15,6 +15,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 @RequestMapping("/admin/users")
 @RequiredArgsConstructor
 public class UserAdminController {
+    public static final String USER_ID = "user-id";
     private final UserService userService;
 
     @PostMapping
@@ -30,9 +31,9 @@ public class UserAdminController {
         return userService.findAll(ids, from, size);
     }
 
-    @DeleteMapping("/{user-id}")
+    @DeleteMapping("/{" + USER_ID + "}")
     @ResponseStatus(NO_CONTENT)
-    public void delete(@PathVariable("user-id") Long userId) {
+    public void delete(@PathVariable(USER_ID) Long userId) {
         userService.deleteById(userId);
     }
 }

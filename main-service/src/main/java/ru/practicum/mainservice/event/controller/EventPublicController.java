@@ -6,7 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainservice.event.dto.EventFullDto;
 import ru.practicum.mainservice.event.dto.EventShortDto;
-import ru.practicum.mainservice.event.model.SortType;
+import ru.practicum.mainservice.event.model.EventSortType;
 import ru.practicum.mainservice.event.service.EventService;
 
 import java.time.LocalDateTime;
@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/events")
 @RequiredArgsConstructor
 public class EventPublicController {
+    public static final String EVENT_ID = "event-id";
     private final EventService eventService;
 
     @GetMapping
@@ -25,7 +26,7 @@ public class EventPublicController {
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                          @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-                                         @RequestParam(required = false) SortType sort,
+                                         @RequestParam(required = false) EventSortType sort,
                                          @RequestParam(defaultValue = "0") Integer from,
                                          @RequestParam(defaultValue = "10") Integer size,
                                          HttpServletRequest request) {
@@ -41,8 +42,8 @@ public class EventPublicController {
                 request);
     }
 
-    @GetMapping("/{event-id}")
-    public EventFullDto getEventById(@PathVariable("event-id") Long eventId, HttpServletRequest request) {
+    @GetMapping("/{" + EVENT_ID + "}")
+    public EventFullDto getEventById(@PathVariable(EVENT_ID) Long eventId, HttpServletRequest request) {
         return eventService.getEventById(eventId, request);
     }
 }

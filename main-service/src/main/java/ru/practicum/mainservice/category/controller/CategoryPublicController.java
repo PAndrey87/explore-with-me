@@ -11,6 +11,7 @@ import java.util.List;
 @RequestMapping("/categories")
 @RequiredArgsConstructor
 public class CategoryPublicController {
+    public static final String CAT_ID = "cat-id";
     private final CategoryService categoryService;
 
     @GetMapping
@@ -20,8 +21,8 @@ public class CategoryPublicController {
         return categoryService.getCategories(from, size);
     }
 
-    @GetMapping("/{cat-id}")
-    public CategoryDto getCategoryById(@PathVariable("cat-id") Long catId) {
+    @GetMapping("/{" + CAT_ID + "}")
+    public CategoryDto getCategoryById(@PathVariable(CAT_ID) Long catId) {
         return categoryService.getCategoryById(catId);
     }
 }

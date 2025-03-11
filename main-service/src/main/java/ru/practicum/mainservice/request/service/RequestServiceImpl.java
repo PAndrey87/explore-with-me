@@ -79,7 +79,7 @@ public class RequestServiceImpl implements RequestService {
 
         if (!event.getState().equals(State.PUBLISHED)) {
             throw new EventParticipationConstraintException(String.format("Event not published. " +
-                                                                          "A user with id=%d cannot make a request to participate in an event with id=%d.", userId, eventId));
+                    "A user with id=%d cannot make a request to participate in an event with id=%d.", userId, eventId));
         }
 
         log.info("{}.{}: Checking if event with id={} has reached its participant limit.", colorizeClass("RequestService"), colorizeMethod("create()"), eventId);

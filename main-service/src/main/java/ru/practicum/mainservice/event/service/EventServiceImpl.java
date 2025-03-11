@@ -67,7 +67,7 @@ public class EventServiceImpl implements EventService {
                                          LocalDateTime rangeStart,
                                          LocalDateTime rangeEnd,
                                          Boolean onlyAvailable,
-                                         SortType sort,
+                                         EventSortType sort,
                                          Integer from,
                                          Integer size,
                                          HttpServletRequest request) {
@@ -78,15 +78,17 @@ public class EventServiceImpl implements EventService {
                 throw new BadRequestException("rangeEnd cannot be before rangeStart");
             }
         }
-        Specification<Event> spec = getPublicFilters(text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
+        Specification<Event> spec = getPublicFilters(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort);
         Sort sorting = Sort.by("eventDate");
 
         if (sort != null) {
             log.info("{}.{}: Sorting events based on SortType.", colorizeClass("EventService"), colorizeMethod("getEvents()"));
-            if (sort == SortType.EVENT_DATE) {
+            if (sort == EventSortType.EVENT_DATE) {
                 sorting = Sort.by("eventDate");
-            } else if (sort == SortType.VIEWS) {
+            } else if (sort == EventSortType.VIEWS) {
                 sorting = Sort.by("views");
+            } else if (sort == EventSortType.RATING) {
+                sorting = Sort.by("rating").descending();
             }
         }
 
@@ -132,7 +134,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException(String.format("Event with id=%d not found", eventId)));
 
-        if (event.getState() != State.PUBLISHED) {
+        if (event.getState() == State.CANCELED || event.getState() == State.PENDING) {
             throw new NotFoundException(String.format("Event with id=%d not found", eventId));
         }
 
@@ -249,8 +251,8 @@ public class EventServiceImpl implements EventService {
                 throw new ConstraintUpdatingException("The start date of the event being modified must be no earlier than an hour from the date of publication.");
             } else if (updateEventAdminRequest.getEventDate().isBefore(minDateConstraint)) {
                 throw new BadRequestException(String.format("Field: eventDate. " +
-                                                            "Error: Должно содержать дату не ранее %s. " +
-                                                            "Value: %s", minDateConstraint, updateEventAdminRequest.getEventDate()));
+                        "Error: Должно содержать дату не ранее %s. " +
+                        "Value: %s", minDateConstraint, updateEventAdminRequest.getEventDate()));
             }
             event.setEventDate(updateEventAdminRequest.getEventDate());
             updatedFieldsLog.append("EventDate|");
@@ -321,8 +323,8 @@ public class EventServiceImpl implements EventService {
 
         if (newEventDto.getEventDate().isBefore(minDateConstraint)) {
             throw new BadRequestException(String.format("Field: eventDate. " +
-                                                        "Error: Должно содержать дату не ранее %s. " +
-                                                        "Value: %s", minDateConstraint, newEventDto.getEventDate()));
+                    "Error: Должно содержать дату не ранее %s. " +
+                    "Value: %s", minDateConstraint, newEventDto.getEventDate()));
         }
 
         log.info("{}.{}: Mapping from NewEventDto to Event", colorizeClass("EventService"), colorizeMethod("create()"));
@@ -421,6 +423,9 @@ public class EventServiceImpl implements EventService {
             }
             if (updateEventUserRequest.getStateAction().equals(StateUser.CANCEL_REVIEW) && event.getState().equals(State.PENDING)) {
                 event.setState(State.CANCELED);
+            }
+            if (updateEventUserRequest.getStateAction().equals(StateUser.COMPLETED_EVENT)) {
+                event.setState(State.COMPLETED);
             }
             updatedFieldsLog.append("StateAction|");
         }

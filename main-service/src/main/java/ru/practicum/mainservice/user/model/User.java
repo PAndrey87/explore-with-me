@@ -22,6 +22,7 @@ public class User {
     String name;
     @Column(unique = true)
     String email;
+    Double rating;
 
     @Override
     public boolean equals(Object o) {
